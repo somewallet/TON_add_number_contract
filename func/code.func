@@ -1,11 +1,44 @@
-;; Функция, которая принимает сообщения, пришедшие из самого блокчейна:
-
+;; Функция, которая принимает сообщения, пришедшие из самого блокчейна
 () recv_internal (slice in_msg_body) impure {
 
-    int n = in_msg_body~load_uint(32); ;; преобразуем сообщение в Usigned Int
+    ;; исключение, кидаем ошибку 35, если битность входящего сообшения < 32
+    throw_if(35, in_msg_body.slice_bits() < 32);
 
-    slice ds = get_data().begin_parse(); ;; берем содержимое c4 ячейки смарт-контаркта и преобразуем его в slice
-    int total = ds~load_uint(64); ;; полученный slice преобразуем в Unsigned Int
+    ;; преобразуем входящее сообщение в Unsigned Int
+    int n = in_msg_body~load_uint(32);
 
-    total += n; ;; суммируем значение из памяти со значением из сообщения
+    ;; берем содержимое регистра c4 смарт-контаркта и преобразуем его в slice
+    slice ds = get_data().begin_parse();
+
+    ;; полученный slice преобразуем в Unsigned Int
+    int total = ds~load_uint(64);
+
+    ;; суммируем значение из памяти со значением из сообщения
+    total += n;
+
+    {-
+        Далее, нам нужно перезаписать регистр с4 и полочить в него новый total
+
+        set_data() - запишет ячейку в регистр с4
+        begin_cell() - создаст Builder для будущей ячейки
+        store_uint()- запишет значение total
+        end_cell()- создать Cell (ячейку)
+    -}
+    
+    set_data(begin_cell().store_uint(total, 64).end_cell());
+
+}
+
+;; Пишем get-метод, который позволит запрашивать новый total
+int get_total() method_id {
+
+    ;; Читаем cell из регистра c4 и превращаем его в slice
+    slice ds = get_data().begin_parse();
+
+    ;; Преобразуем slice в Unsigned Int
+    int total = ds~load_uint(64);
+
+    ;; Возвращаем полученное значение
+    return total;
+
 }
