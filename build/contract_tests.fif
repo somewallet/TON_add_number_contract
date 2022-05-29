@@ -6,6 +6,8 @@ PROGRAM{
   1 DECLMETHOD test_example
   2 DECLMETHOD test_get_total_data
   3 DECLMETHOD test_get_total
+  4 DECLMETHOD test_exception_data
+  5 DECLMETHOD test_exception
   get_c7 PROC:<{
     // 
     124711402 PUSHINT	//  _2=124711402
@@ -77,5 +79,28 @@ PROGRAM{
     FIRST	//  counter
     10 NEQINT	//  _13
     104 THROWIF
+  }>
+  test_exception_data PROC:<{
+    // 
+    0 PUSHINT	//  function_selector=0
+    30 PUSHINT	//  function_selector=0 _3=30
+    NEWC	//  function_selector=0 _3=30 _4
+    31 STU	//  function_selector=0 _6
+    ENDC	//  function_selector=0 message
+    CTOS	//  function_selector=0 _10
+    SINGLE	//  function_selector=0 stack
+    OVER	//  function_selector=0 stack _13=0
+    NEWC	//  function_selector=0 stack _13=0 _14
+    64 STU	//  function_selector=0 stack _16
+    ENDC	//  function_selector=0 stack data
+    get_c7 INLINECALLDICT	//  function_selector=0 stack data _19
+    PUSHNULL	//  function_selector=0 stack data _19 _20
+    5 TUPLE	//  _18
+  }>
+  test_exception PROC:<{
+    //  exit_code data stack actions gas
+    4 BLKDROP	//  exit_code
+    0 EQINT	//  _7
+    100 THROWIF
   }>
 }END>c
