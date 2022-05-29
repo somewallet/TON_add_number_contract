@@ -1,5 +1,5 @@
 "Asm.fif" include
-// automatically generated from `C:\Users\79152\AppData\Local\toncli\toncli\func-libs\stdlib.func` `C:\Users\79152\TON\TON_add_number_contract\func\code.func` 
+// automatically generated from `C:\Users\79152\AppData\Local\toncli\toncli\func-libs\stdlib-tests.func` `C:\Users\79152\TON\TON_add_number_contract\func\code.func` 
 PROGRAM{
   DECLPROC recv_internal
   128253 DECLMETHOD get_total
