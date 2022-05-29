@@ -4,6 +4,8 @@ PROGRAM{
   85860 DECLMETHOD get_c7
   0 DECLMETHOD test_example_data
   1 DECLMETHOD test_example
+  2 DECLMETHOD test_get_total_data
+  3 DECLMETHOD test_get_total
   get_c7 PROC:<{
     // 
     124711402 PUSHINT	//  _2=124711402
@@ -52,5 +54,28 @@ PROGRAM{
     1000000 PUSHINT	//  gas _19=1000000
     GREATER	//  _20
     102 THROWIF
+  }>
+  test_get_total_data PROC:<{
+    // 
+    128253 PUSHINT	//  function_selector=128253
+    0 TUPLE	//  function_selector=128253 stack
+    10 PUSHINT	//  function_selector=128253 stack _6=10
+    NEWC	//  function_selector=128253 stack _6=10 _7
+    64 STU	//  function_selector=128253 stack _9
+    ENDC	//  function_selector=128253 stack data
+    get_c7 INLINECALLDICT	//  function_selector=128253 stack data _12
+    PUSHNULL	//  function_selector=128253 stack data _12 _13
+    5 TUPLE	//  _11
+  }>
+  test_get_total PROC:<{
+    //  exit_code data stack actions gas
+    s2 s3 XCHG
+    3 BLKDROP	//  exit_code stack
+    SWAP	//  stack exit_code
+    0 NEQINT	//  stack _7
+    103 THROWIF
+    FIRST	//  counter
+    10 NEQINT	//  _13
+    104 THROWIF
   }>
 }END>c

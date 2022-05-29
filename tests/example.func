@@ -1,3 +1,17 @@
+{-
+
+Функция данных
+
+Функция с данными не принимает никаких аргументов, но должна возвращать:
+
+function selector - id вызываемой функции в тестируемом контракте;
+tuple - (стек) значения которые мы будем передавать в функцию выполнящую тесты;
+c4 cell - "постоянные данные" в управляющем регистре c4;
+c7 tuple - "временные данные" в управляющем регистре с7;
+gas limit integer - лимит газа
+
+-}
+
 [int, tuple, cell, tuple, int] test_example_data() method_id(0) {
 
     int function_selector = 0;
@@ -12,6 +26,20 @@
 
 }
 
+{-
+
+Функция тестов
+
+Функция тестов должна принимать следующие аргументы:
+
+exit code - код возврата виртуальной машины, чтобы мы могли понять ошибка или нет
+c4 cell - "постоянные данные" в управляющем регистре c4
+tuple - (стек) значения которые мы передаем от функции данных
+c5 cell - для проверки исходящих сообщений
+gas - газ, который был использован
+
+-}
+
 _ test_example(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(1) {
 
     throw_if(100, exit_code != 0);
@@ -20,5 +48,31 @@ _ test_example(int exit_code, cell data, tuple stack, cell actions, int gas) met
 
     throw_if(101, ds~load_uint(64) != 10);
     throw_if(102, gas > 1000000);
-    
+
+}
+
+[int, tuple, cell, tuple, int] test_get_total_data() method_id(2) {
+
+    int function_selector = 128253; ;; id функции в скомпилированном смарт-контракте ~/build/contract.fif
+
+    tuple stack = unsafe_tuple([]); ;; в функцию не нужно передавать аргументов
+
+    cell data = begin_cell().store_uint(10, 64).end_cell();
+
+    return [function_selector, stack, data, get_c7(), null()];
+
+}
+
+_ test_get_total(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(3) {
+
+    throw_if(103, exit_code != 0);
+
+    {- В нашем тесте нам важно чтобы значение 10, которое мы передали находилось "сверху" стека,
+    поэтому вычитываем с помощью функции first стандартной бибиблиотеки stdlib.fc,
+    которая возвращает первое значение кортежа. -}
+
+    int counter = first(stack);
+
+    throw_if(104, counter != 10);
+
 }
